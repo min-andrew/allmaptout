@@ -115,3 +115,4 @@ nvim  # First launch installs plugins
 ## Environment
 
 Copy `.env.example` to `.env` and fill in real values. Never commit `.env`.
+

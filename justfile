@@ -1,4 +1,4 @@
-# Wedding App - Monorepo Commands
+# allmaptout
 set dotenv-load := true
 
 # Show available commands
@@ -10,11 +10,11 @@ default:
 # ─────────────────────────────────────────────────────────────────────────────
 
 # Start backend with hot reload
-dev-backend:
+backend:
     cd backend && cargo watch -x run
 
 # Start frontend with HMR
-dev-frontend:
+frontend:
     cd frontend && pnpm dev
 
 # Watch and run tests on file changes
@@ -83,13 +83,9 @@ db-migrate:
 # Code Generation
 # ─────────────────────────────────────────────────────────────────────────────
 
-# Generate OpenAPI spec from backend
-generate-openapi:
+# Generate frontend api hooks from backend Openapi
+generate:
     cd backend && cargo run --bin openapi > ../frontend/openapi.json
-
-# Generate frontend API hooks from OpenAPI
-generate-api:
-    just generate-openapi
     cd frontend && pnpm generate
 
 # ─────────────────────────────────────────────────────────────────────────────
