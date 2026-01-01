@@ -23,7 +23,8 @@ pub async fn health() -> Json<Health> {
 }
 
 pub fn create_router() -> Router {
-    create_router_with_rate_limit(true)
+    let is_dev = std::env::var("RUST_ENV").unwrap_or_default() == "development";
+    create_router_with_rate_limit(!is_dev)
 }
 
 pub fn create_router_with_rate_limit(enable_rate_limit: bool) -> Router {
