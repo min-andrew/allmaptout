@@ -4,7 +4,7 @@
 
 - [Rust](https://rustup.rs/)
 - [Node.js](https://nodejs.org/) + pnpm (`npm install -g pnpm`)
-- [Colima](https://github.com/abiosoft/colima) + Docker CLI
+- [Docker Desktop](https://www.docker.com/products/docker-desktop/)
 - [just](https://github.com/casey/just)
 
 ### Install prerequisites (macOS)
@@ -15,8 +15,8 @@ curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
 # Node tools
 npm install -g pnpm
 
-# Docker (terminal-only, no Docker Desktop)
-brew install colima docker docker-compose
+# Docker
+brew install --cask docker
 
 # Command runner
 brew install just
@@ -49,9 +49,6 @@ cd frontend && pnpm install && cd ..
 # Install git hooks
 lefthook install
 
-# Start Docker
-colima start
-
 # Start database
 docker compose up -d db
 ```
@@ -59,10 +56,10 @@ docker compose up -d db
 ## Development
 ```bash
 # Terminal 1: Backend (http://localhost:3001)
-just dev-backend
+just backend
 
 # Terminal 2: Frontend (http://localhost:3000)
-just dev-frontend
+just frontend
 
 # Terminal 3 (optional): Watch tests
 just watch-tests
@@ -86,7 +83,7 @@ just db-migrate     # Run migrations
 just generate   # Generate frontend hooks from backend OpenAPI
 ```
 
-## Editor Setup (Neovim)
+## The personal editor setup for now (Neovim, but using LazyVim for now)
 ```bash
 # Install LazyVim
 mv ~/.config/nvim ~/.config/nvim.bak 2>/dev/null
@@ -98,7 +95,7 @@ nvim  # First launch installs plugins
 :MasonInstall rust-analyzer svelte-language-server astro-language-server typescript-language-server tailwindcss-language-server prettier eslint_d taplo
 ```
 
-## Project Structure
+## Project structure
 ```
 ├── backend/           # Rust + Axum
 │   └── src/
