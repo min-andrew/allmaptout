@@ -1,4 +1,4 @@
-# Wedding App
+# A personal wedding app 
 
 ## Setup
 
