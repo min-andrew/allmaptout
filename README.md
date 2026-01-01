@@ -67,8 +67,8 @@ just watch-tests
 
 ## Commands
 ```bash
-just dev-backend    # Backend with hot reload
-just dev-frontend   # Frontend with HMR
+just backend    # Backend with hot reload
+just frontend   # Frontend with HMR
 just watch-tests    # Run tests on file changes
 
 just test           # Run all tests
