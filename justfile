@@ -42,10 +42,10 @@ test-frontend:
 # Code Quality
 # ─────────────────────────────────────────────────────────────────────────────
 
-# Run all checks (CI equivalent)
+# Run all checks
 check:
+    just format
     just lint
-    just format-check
     just test
 
 # Lint all code
@@ -57,11 +57,6 @@ lint:
 format:
     cd backend && cargo fmt
     cd frontend && pnpm format
-
-# Check formatting
-format-check:
-    cd backend && cargo fmt --check
-    cd frontend && pnpm format:check
 
 # ─────────────────────────────────────────────────────────────────────────────
 # Database
