@@ -1,4 +1,4 @@
-use axum::{routing::get, Json, Router};
+use axum::{Json, Router, routing::get};
 use serde::Serialize;
 use tower_http::{cors::CorsLayer, trace::TraceLayer};
 
