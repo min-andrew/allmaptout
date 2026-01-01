@@ -1,0 +1,20 @@
+pre-commit:
+  parallel: true
+  commands:
+    rust-fmt:
+      glob: "backend/**/*.rs"
+      run: cd backend && cargo fmt --check
+    rust-clippy:
+      glob: "backend/**/*.rs"
+      run: cd backend && cargo clippy -- -D warnings
+    frontend-lint:
+      glob: "frontend/src/**/*.{ts,svelte,astro}"
+      run: cd frontend && pnpm lint
+    frontend-format:
+      glob: "frontend/src/**/*.{ts,svelte,astro,css}"
+      run: cd frontend && pnpm format:check
+
+pre-push:
+  commands:
+    test:
+      run: just test

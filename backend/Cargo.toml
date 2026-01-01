@@ -1,0 +1,43 @@
+[package]
+name = "allmaptout-backend"
+version.workspace = true
+edition.workspace = true
+default-run = "allmaptout-backend"
+
+[[bin]]
+name = "allmaptout-backend"
+path = "src/main.rs"
+
+[[bin]]
+name = "openapi"
+path = "src/bin/openapi.rs"
+
+[dependencies]
+# Web framework
+axum = "0.7"
+tokio = { version = "1", features = ["rt-multi-thread", "macros"] }
+tower-http = { version = "0.6", features = ["cors", "trace"] }
+
+# Serialization
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+
+# OpenAPI
+utoipa = { version = "5", features = ["axum_extras"] }
+utoipa-axum = "0.1"
+
+# Database
+sqlx = { version = "0.8", features = ["runtime-tokio", "postgres", "migrate"] }
+
+# Config & logging
+dotenvy = "0.15"
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter"] }
+
+# Error handling
+thiserror = "2"
+anyhow = "1"
+
+[dev-dependencies]
+axum-test = "16"
+tokio = { version = "1", features = ["test-util"] }

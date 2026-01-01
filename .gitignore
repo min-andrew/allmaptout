@@ -1,0 +1,28 @@
+# Environment (NEVER commit .env)
+.env
+.env.local
+.env.*.local
+
+# Dependencies
+node_modules/
+target/
+
+# Build
+dist/
+.astro/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+
+# Logs
+*.log
+
+# Generated
+frontend/openapi.json
+frontend/src/api/generated/
