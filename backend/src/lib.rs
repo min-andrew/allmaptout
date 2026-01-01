@@ -3,7 +3,9 @@ use std::sync::Arc;
 use axum::{routing::get, Json, Router};
 use http::header::{HeaderName, HeaderValue};
 use serde::Serialize;
-use tower_governor::{governor::GovernorConfigBuilder, GovernorLayer};
+use tower_governor::{
+    governor::GovernorConfigBuilder, key_extractor::SmartIpKeyExtractor, GovernorLayer,
+};
 use tower_http::{cors::CorsLayer, set_header::SetResponseHeaderLayer, trace::TraceLayer};
 
 pub mod config;
@@ -43,6 +45,7 @@ pub fn create_router_with_rate_limit(enable_rate_limit: bool) -> Router {
             GovernorConfigBuilder::default()
                 .per_second(10)
                 .burst_size(20)
+                .key_extractor(SmartIpKeyExtractor)
                 .finish()
                 .unwrap(),
         );
