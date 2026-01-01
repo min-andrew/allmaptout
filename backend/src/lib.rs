@@ -1,6 +1,10 @@
+use std::sync::Arc;
+
 use axum::{routing::get, Json, Router};
+use http::header::{HeaderName, HeaderValue};
 use serde::Serialize;
-use tower_http::{cors::CorsLayer, trace::TraceLayer};
+use tower_governor::{governor::GovernorConfigBuilder, GovernorLayer};
+use tower_http::{cors::CorsLayer, set_header::SetResponseHeaderLayer, trace::TraceLayer};
 
 pub mod config;
 
@@ -17,10 +21,37 @@ pub async fn health() -> Json<Health> {
 }
 
 pub fn create_router() -> Router {
-    Router::new()
+    create_router_with_rate_limit(true)
+}
+
+pub fn create_router_with_rate_limit(enable_rate_limit: bool) -> Router {
+    let router = Router::new()
         .route("/health", get(health))
         .layer(TraceLayer::new_for_http())
         .layer(CorsLayer::permissive())
+        .layer(SetResponseHeaderLayer::if_not_present(
+            HeaderName::from_static("x-content-type-options"),
+            HeaderValue::from_static("nosniff"),
+        ))
+        .layer(SetResponseHeaderLayer::if_not_present(
+            HeaderName::from_static("x-frame-options"),
+            HeaderValue::from_static("DENY"),
+        ));
+
+    if enable_rate_limit {
+        let governor_config = Arc::new(
+            GovernorConfigBuilder::default()
+                .per_second(10)
+                .burst_size(20)
+                .finish()
+                .unwrap(),
+        );
+        router.layer(GovernorLayer {
+            config: governor_config,
+        })
+    } else {
+        router
+    }
 }
 
 #[cfg(test)]
@@ -30,7 +61,7 @@ mod tests {
 
     #[tokio::test]
     async fn health_returns_ok() {
-        let server = TestServer::new(create_router()).unwrap();
+        let server = TestServer::new(create_router_with_rate_limit(false)).unwrap();
         let response = server.get("/health").await;
         response.assert_status_ok();
     }
