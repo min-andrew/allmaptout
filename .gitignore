@@ -26,3 +26,6 @@ dist/
 # Generated
 frontend/openapi.json
 frontend/src/api/generated/
+
+# Claude
+.claude/
