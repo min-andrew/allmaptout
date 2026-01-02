@@ -88,6 +88,8 @@ mod tests {
 
     #[tokio::test]
     async fn health_returns_ok() {
+        // Set development mode for tests to avoid CORS_ORIGIN requirement
+        std::env::set_var("RUST_ENV", "development");
         let server = TestServer::new(create_router_with_rate_limit(false)).unwrap();
         let response = server.get("/health").await;
         response.assert_status_ok();
