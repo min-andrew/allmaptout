@@ -1,0 +1,45 @@
+# HTTPS Ingress Configuration
+#
+# Prerequisites:
+# 1. Install cert-manager: kubectl apply -f https://github.com/cert-manager/cert-manager/releases/download/v1.14.4/cert-manager.yaml
+# 2. Update cert-manager.yaml with your email and apply: kubectl apply -f k8s/cert-manager.yaml
+# 3. Configure your domain DNS to point to the AWS Load Balancer
+# 4. Copy this file to ingress-tls.yaml, replace YOUR_DOMAIN, and apply
+#
+# Usage:
+#   cp k8s/ingress-tls.yaml.example k8s/ingress-tls.yaml
+#   # Edit YOUR_DOMAIN in ingress-tls.yaml
+#   kubectl apply -f k8s/ingress-tls.yaml
+
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: allmaptout-ingress
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /$2
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+spec:
+  ingressClassName: nginx
+  tls:
+    - hosts:
+        - YOUR_DOMAIN  # e.g., allmaptout.com
+      secretName: allmaptout-tls
+  rules:
+    - host: YOUR_DOMAIN  # e.g., allmaptout.com
+      http:
+        paths:
+          - path: /api(/|$)(.*)
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: backend
+                port:
+                  number: 3001
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: frontend
+                port:
+                  number: 80

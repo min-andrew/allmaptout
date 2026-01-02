@@ -1,7 +1,10 @@
 use std::sync::Arc;
 
 use axum::{routing::get, Json, Router};
-use http::header::{HeaderName, HeaderValue};
+use http::{
+    header::{HeaderName, HeaderValue},
+    Method,
+};
 use serde::Serialize;
 use tower_governor::{
     governor::GovernorConfigBuilder, key_extractor::SmartIpKeyExtractor, GovernorLayer,
@@ -9,6 +12,9 @@ use tower_governor::{
 use tower_http::{cors::CorsLayer, set_header::SetResponseHeaderLayer, trace::TraceLayer};
 
 pub mod config;
+pub mod error;
+
+pub use error::{AppError, Result};
 
 #[derive(Serialize, utoipa::ToSchema)]
 pub struct Health {
@@ -22,6 +28,23 @@ pub async fn health() -> Json<Health> {
     })
 }
 
+fn cors_layer() -> CorsLayer {
+    let is_dev = std::env::var("RUST_ENV").unwrap_or_default() == "development";
+
+    if is_dev {
+        CorsLayer::permissive()
+    } else {
+        // In production, restrict CORS to the frontend origin
+        // Set CORS_ORIGIN to your production URL (e.g., https://example.com)
+        let origin = std::env::var("CORS_ORIGIN").expect("CORS_ORIGIN must be set in production");
+
+        CorsLayer::new()
+            .allow_origin(origin.parse::<HeaderValue>().unwrap())
+            .allow_methods([Method::GET, Method::POST, Method::PUT, Method::DELETE])
+            .allow_headers([http::header::CONTENT_TYPE, http::header::AUTHORIZATION])
+    }
+}
+
 pub fn create_router() -> Router {
     let is_dev = std::env::var("RUST_ENV").unwrap_or_default() == "development";
     create_router_with_rate_limit(!is_dev)
@@ -31,7 +54,7 @@ pub fn create_router_with_rate_limit(enable_rate_limit: bool) -> Router {
     let router = Router::new()
         .route("/health", get(health))
         .layer(TraceLayer::new_for_http())
-        .layer(CorsLayer::permissive())
+        .layer(cors_layer())
         .layer(SetResponseHeaderLayer::if_not_present(
             HeaderName::from_static("x-content-type-options"),
             HeaderValue::from_static("nosniff"),
