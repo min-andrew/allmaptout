@@ -1,4 +1,4 @@
-use std::sync::Arc;
+use std::{sync::Arc, time::Duration};
 
 use axum::{
     body::Body,
@@ -17,7 +17,13 @@ use tower_governor::{
     governor::GovernorConfigBuilder,
     key_extractor::{KeyExtractor, SmartIpKeyExtractor},
 };
-use tower_http::{cors::CorsLayer, set_header::SetResponseHeaderLayer, trace::TraceLayer};
+use tower_http::{
+    classify::ServerErrorsFailureClass,
+    cors::CorsLayer,
+    set_header::SetResponseHeaderLayer,
+    trace::{DefaultOnRequest, DefaultOnResponse, TraceLayer},
+};
+use tracing::{Level, Span};
 
 pub mod config;
 pub mod error;
@@ -103,10 +109,51 @@ pub fn create_router_with_rate_limit(enable_rate_limit: bool) -> Router {
         })
     };
 
+    // Configure request/response logging
+    let trace_layer = TraceLayer::new_for_http()
+        .make_span_with(|request: &Request<Body>| {
+            let client_ip = request
+                .headers()
+                .get("x-forwarded-for")
+                .and_then(|v| v.to_str().ok())
+                .and_then(|s| s.split(',').next())
+                .map(|s| s.trim().to_string())
+                .or_else(|| {
+                    request
+                        .headers()
+                        .get("x-real-ip")
+                        .and_then(|v| v.to_str().ok())
+                        .map(|s| s.to_string())
+                })
+                .unwrap_or_else(|| "internal".to_string());
+
+            tracing::info_span!(
+                "request",
+                method = %request.method(),
+                path = %request.uri().path(),
+                client_ip = %client_ip,
+            )
+        })
+        .on_request(DefaultOnRequest::new().level(Level::INFO))
+        .on_response(
+            DefaultOnResponse::new()
+                .level(Level::INFO)
+                .latency_unit(tower_http::LatencyUnit::Millis),
+        )
+        .on_failure(
+            |error: ServerErrorsFailureClass, latency: Duration, _span: &Span| {
+                tracing::error!(
+                    latency_ms = latency.as_millis(),
+                    error = %error,
+                    "request failed"
+                );
+            },
+        );
+
     Router::new()
         .route("/health", get(health))
         .layer(rate_limit_middleware)
-        .layer(TraceLayer::new_for_http())
+        .layer(trace_layer)
         .layer(cors_layer())
         .layer(SetResponseHeaderLayer::if_not_present(
             HeaderName::from_static("x-content-type-options"),
