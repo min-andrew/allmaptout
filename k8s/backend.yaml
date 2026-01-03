@@ -39,6 +39,8 @@ spec:
           env:
             - name: PORT
               value: "3001"
+            - name: RUST_ENV
+              value: "development"
             - name: DATABASE_URL
               valueFrom:
                 secretKeyRef:
