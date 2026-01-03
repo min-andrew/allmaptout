@@ -27,8 +27,10 @@ use tracing::{Level, Span};
 
 pub mod config;
 pub mod error;
+pub mod schemas;
 
 pub use error::{AppError, Result};
+pub use schemas::ValidatedRequest;
 
 /// Returns true if the request has IP headers (external traffic from load balancer)
 fn has_ip_headers(req: &Request) -> bool {

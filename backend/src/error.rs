@@ -5,6 +5,8 @@ use axum::{
 };
 use serde::Serialize;
 
+use crate::schemas::{FieldError, ValidationErrorResponse};
+
 #[derive(Debug, thiserror::Error)]
 pub enum AppError {
     #[error("Not found: {0}")]
@@ -12,6 +14,9 @@ pub enum AppError {
 
     #[error("Bad request: {0}")]
     BadRequest(String),
+
+    #[error("Validation failed")]
+    Validation(Vec<FieldError>),
 
     #[error("Unauthorized")]
     Unauthorized,
@@ -23,6 +28,13 @@ pub enum AppError {
     Database(#[from] sqlx::Error),
 }
 
+impl AppError {
+    /// Create a validation error from field errors.
+    pub fn validation(fields: Vec<FieldError>) -> Self {
+        Self::Validation(fields)
+    }
+}
+
 #[derive(Serialize)]
 struct ErrorResponse {
     error: String,
@@ -30,27 +42,46 @@ struct ErrorResponse {
 
 impl IntoResponse for AppError {
     fn into_response(self) -> Response {
-        let (status, message) = match &self {
-            AppError::NotFound(msg) => (StatusCode::NOT_FOUND, msg.clone()),
-            AppError::BadRequest(msg) => (StatusCode::BAD_REQUEST, msg.clone()),
-            AppError::Unauthorized => (StatusCode::UNAUTHORIZED, "Unauthorized".to_string()),
+        match self {
+            AppError::Validation(fields) => (
+                StatusCode::BAD_REQUEST,
+                Json(ValidationErrorResponse::new(fields)),
+            )
+                .into_response(),
+            AppError::NotFound(msg) => {
+                (StatusCode::NOT_FOUND, Json(ErrorResponse { error: msg })).into_response()
+            }
+            AppError::BadRequest(msg) => {
+                (StatusCode::BAD_REQUEST, Json(ErrorResponse { error: msg })).into_response()
+            }
+            AppError::Unauthorized => (
+                StatusCode::UNAUTHORIZED,
+                Json(ErrorResponse {
+                    error: "Unauthorized".to_string(),
+                }),
+            )
+                .into_response(),
             AppError::Internal(err) => {
                 tracing::error!("Internal error: {:?}", err);
                 (
                     StatusCode::INTERNAL_SERVER_ERROR,
-                    "Internal server error".to_string(),
+                    Json(ErrorResponse {
+                        error: "Internal server error".to_string(),
+                    }),
                 )
+                    .into_response()
             }
             AppError::Database(err) => {
                 tracing::error!("Database error: {:?}", err);
                 (
                     StatusCode::INTERNAL_SERVER_ERROR,
-                    "Internal server error".to_string(),
+                    Json(ErrorResponse {
+                        error: "Internal server error".to_string(),
+                    }),
                 )
+                    .into_response()
             }
-        };
-
-        (status, Json(ErrorResponse { error: message })).into_response()
+        }
     }
 }
 
