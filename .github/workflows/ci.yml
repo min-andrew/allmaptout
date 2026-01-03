@@ -5,6 +5,7 @@ on:
     branches: [main]
   pull_request:
     branches: [main]
+  workflow_dispatch:
 
 jobs:
   backend:
@@ -93,11 +94,12 @@ jobs:
 
   deploy:
     needs: [build]
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    if: github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
+    environment: production
     env:
-      AWS_REGION: us-west-2  # Update with your region
-      EKS_CLUSTER: allmaptout  # Update with your cluster name
+      AWS_REGION: us-west-2
+      EKS_CLUSTER: allmaptout
     steps:
       - uses: actions/checkout@v4
 
