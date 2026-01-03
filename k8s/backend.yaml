@@ -40,7 +40,7 @@ spec:
             - name: PORT
               value: "3001"
             - name: RUST_ENV
-              value: "development"
+              value: "production"
             - name: DATABASE_URL
               valueFrom:
                 secretKeyRef:
