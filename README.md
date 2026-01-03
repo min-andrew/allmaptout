@@ -2,6 +2,19 @@
 
 A full-stack web application template with Rust backend, Astro frontend, and Kubernetes deployment.
 
+## Use as Template
+
+Fork this repo and rename it:
+
+```bash
+./setup-template.sh myproject
+```
+
+This renames the project throughout the codebase. Then update:
+- GitHub container registry paths (replace `min-andrew` with your username)
+- AWS EKS cluster name in `.github/workflows/ci.yml`
+- Kubernetes secrets
+
 ## Tech Stack
 
 | Layer | Technology |
