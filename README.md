@@ -1,6 +1,6 @@
 # Allmaptout
 
-A production-ready full-stack web application template with Rust backend, Astro frontend, and Kubernetes deployment.
+A full-stack web application template with Rust backend, Astro frontend, and Kubernetes deployment.
 
 ## Tech Stack
 
