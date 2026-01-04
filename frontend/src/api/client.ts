@@ -68,6 +68,7 @@ export async function client<T>(config: RequestConfig): Promise<T> {
         ...config.headers,
       },
       body: config.data ? JSON.stringify(config.data) : undefined,
+      credentials: "include",
     });
   } catch (err) {
     throw new NetworkError(err instanceof Error ? err : undefined);
@@ -81,6 +82,11 @@ export async function client<T>(config: RequestConfig): Promise<T> {
       // Response body is not JSON
     }
     throw new ApiError(response.status, response.statusText, body);
+  }
+
+  // Handle 204 No Content
+  if (response.status === 204) {
+    return undefined as T;
   }
 
   return response.json();

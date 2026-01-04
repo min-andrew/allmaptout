@@ -13,9 +13,9 @@ default:
 backend:
     cd backend && cargo watch -x run
 
-# Start frontend with HMR
+# Start frontend with HMR + type checking
 frontend:
-    cd frontend && pnpm dev
+    cd frontend && pnpm dev:check
 
 # Watch and run tests on file changes
 watch-tests:
@@ -46,6 +46,7 @@ test-frontend:
 check:
     just format
     just lint
+    cd frontend && pnpm typecheck
     just test
 
 # Lint all code
@@ -65,6 +66,11 @@ format:
 # Start database
 db-start:
     docker compose up -d db
+
+# Start database with GUI (http://localhost:8080)
+db-gui:
+    docker compose up -d db adminer
+    @echo "Database GUI available at http://localhost:8080"
 
 # Stop database
 db-stop:

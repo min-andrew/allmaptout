@@ -12,6 +12,10 @@ path = "src/main.rs"
 name = "openapi"
 path = "src/bin/openapi.rs"
 
+[[bin]]
+name = "seed"
+path = "src/bin/seed.rs"
+
 [dependencies]
 # Web framework
 axum = "0.7"
@@ -26,11 +30,19 @@ serde_json = "1"
 validator = { version = "0.20", features = ["derive"] }
 
 # OpenAPI
-utoipa = { version = "5", features = ["axum_extras"] }
+utoipa = { version = "5", features = ["axum_extras", "uuid", "chrono"] }
 utoipa-axum = "0.1"
 
 # Database
-sqlx = { version = "0.8", features = ["runtime-tokio", "postgres", "migrate", "tls-rustls"] }
+sqlx = { version = "0.8", features = ["runtime-tokio", "postgres", "migrate", "tls-rustls", "uuid", "chrono"] }
+
+# Auth
+uuid = { version = "1", features = ["v4", "serde"] }
+chrono = { version = "0.4", features = ["serde"] }
+argon2 = "0.5"
+rand = "0.8"
+tower-cookies = "0.10"
+hex = "0.4"
 
 # Config & logging
 dotenvy = "0.15"

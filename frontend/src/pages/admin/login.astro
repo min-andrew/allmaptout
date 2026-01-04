@@ -1,0 +1,14 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import AdminLoginForm from "../../components/AdminLoginForm.svelte";
+---
+
+<Layout title="Admin Login">
+  <main class="flex min-h-screen flex-col items-center justify-center px-4">
+    <div class="mb-8 text-center">
+      <h1 class="mb-2 text-3xl font-bold text-gray-900">Admin Login</h1>
+      <p class="text-gray-600">Enter your admin credentials</p>
+    </div>
+    <AdminLoginForm client:load />
+  </main>
+</Layout>
