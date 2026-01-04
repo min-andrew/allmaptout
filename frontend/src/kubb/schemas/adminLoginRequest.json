@@ -1,0 +1,10 @@
+{
+  "type": "object",
+  "description": "Request for admin login (username/password).",
+  "required": ["username", "password"],
+  "properties": {
+    "password": { "type": "string", "description": "Admin password." },
+    "username": { "type": "string", "description": "Admin username." }
+  },
+  "x-readme-ref-name": "AdminLoginRequest"
+}

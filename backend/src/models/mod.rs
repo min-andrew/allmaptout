@@ -104,3 +104,38 @@ impl Session {
         self.expires_at < Utc::now()
     }
 }
+
+#[derive(Debug, Clone, Serialize, Deserialize, FromRow, ToSchema)]
+pub struct Event {
+    pub id: Uuid,
+    pub name: String,
+    pub event_type: String,
+    pub event_date: chrono::NaiveDate,
+    pub event_time: chrono::NaiveTime,
+    pub location_name: String,
+    pub location_address: String,
+    pub description: Option<String>,
+    pub display_order: i32,
+    pub created_at: DateTime<Utc>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, FromRow, ToSchema)]
+pub struct Rsvp {
+    pub id: Uuid,
+    pub guest_id: Uuid,
+    pub responded_at: DateTime<Utc>,
+    pub created_at: DateTime<Utc>,
+    pub updated_at: DateTime<Utc>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, FromRow, ToSchema)]
+pub struct RsvpAttendee {
+    pub id: Uuid,
+    pub rsvp_id: Uuid,
+    pub name: String,
+    pub is_attending: bool,
+    pub meal_preference: Option<String>,
+    pub dietary_restrictions: Option<String>,
+    pub is_primary: bool,
+    pub created_at: DateTime<Utc>,
+}

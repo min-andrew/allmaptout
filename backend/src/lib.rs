@@ -30,7 +30,9 @@ use tracing::{Level, Span};
 pub mod auth;
 pub mod config;
 pub mod error;
+pub mod events;
 pub mod models;
+pub mod rsvp;
 pub mod schemas;
 
 pub use error::{AppError, Result};
@@ -161,6 +163,9 @@ pub fn create_router_with_rate_limit(pool: PgPool, enable_rate_limit: bool) -> R
         .route("/auth/admin/login", post(auth::admin_login))
         .route("/auth/logout", post(auth::logout))
         .route("/auth/session", get(auth::get_session))
+        .route("/events", get(events::list_events))
+        .route("/rsvp", get(rsvp::get_rsvp_status))
+        .route("/rsvp", post(rsvp::submit_rsvp))
         .with_state(pool)
         .layer(CookieManagerLayer::new())
         .layer(rate_limit_middleware)

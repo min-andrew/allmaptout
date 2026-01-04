@@ -1,14 +1,14 @@
 import { defineConfig } from "@kubb/core";
 import { pluginOas } from "@kubb/plugin-oas";
 import { pluginTs } from "@kubb/plugin-ts";
-import { pluginSvelteQuery } from "@kubb/plugin-svelte-query";
+import { pluginClient } from "@kubb/plugin-client";
 
 export default defineConfig({
   input: {
     path: "./openapi.json",
   },
   output: {
-    path: "./src/api/generated",
+    path: "./src/kubb",
     clean: true,
   },
   plugins: [
@@ -16,11 +16,12 @@ export default defineConfig({
     pluginTs({
       output: { path: "types" },
     }),
-    pluginSvelteQuery({
+    pluginClient({
       output: { path: "hooks" },
-      client: {
-        importPath: "../client",
+      transformers: {
+        name: (name) => `use${name.charAt(0).toUpperCase()}${name.slice(1)}`,
       },
+      baseURL: "/api",
     }),
   ],
 });

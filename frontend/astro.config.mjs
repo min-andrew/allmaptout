@@ -3,7 +3,14 @@ import svelte from "@astrojs/svelte";
 import tailwind from "@astrojs/tailwind";
 
 export default defineConfig({
-  integrations: [svelte(), tailwind()],
+  integrations: [
+    svelte({
+      compilerOptions: {
+        runes: false,
+      },
+    }),
+    tailwind(),
+  ],
   output: "server",
   server: {
     port: 3000,

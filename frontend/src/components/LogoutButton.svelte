@@ -1,12 +1,12 @@
 <script lang="ts">
-  import { logout } from "../api/auth";
+  import { useLogout } from "../kubb/hooks/useLogout";
 
   let loading = false;
 
   async function handleLogout() {
     loading = true;
     try {
-      await logout();
+      await useLogout({ withCredentials: true });
     } catch {
       // Ignore errors - redirect anyway
     }

@@ -1,0 +1,9 @@
+{
+  "type": "object",
+  "description": "Response after successful admin login.",
+  "required": ["username"],
+  "properties": {
+    "username": { "type": "string", "description": "The admin's username." }
+  },
+  "x-readme-ref-name": "AdminLoginResponse"
+}

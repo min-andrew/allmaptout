@@ -1,0 +1,16 @@
+{
+  "type": "object",
+  "description": "Response after validating an invite code.",
+  "required": ["session_type"],
+  "properties": {
+    "guest_name": {
+      "type": ["string", "null"],
+      "description": "Guest name (only for guest sessions)."
+    },
+    "session_type": {
+      "type": "string",
+      "description": "The type of session created: \"guest\" or \"admin_pending\"."
+    }
+  },
+  "x-readme-ref-name": "ValidateCodeResponse"
+}

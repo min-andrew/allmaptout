@@ -7,7 +7,7 @@ export default [
   ...astro.configs.recommended,
   ...svelte.configs["flat/recommended"],
   {
-    ignores: ["dist/", ".astro/", "src/api/generated/"],
+    ignores: ["dist/", ".astro/", "src/kubb/"],
   },
   {
     files: ["**/*.svelte"],

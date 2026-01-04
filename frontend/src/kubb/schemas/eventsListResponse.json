@@ -1,0 +1,35 @@
+{
+  "type": "object",
+  "description": "Response containing a list of events.",
+  "required": ["events"],
+  "properties": {
+    "events": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "description": "Response for a single event.",
+        "required": [
+          "id",
+          "name",
+          "event_type",
+          "event_date",
+          "event_time",
+          "location_name",
+          "location_address"
+        ],
+        "properties": {
+          "description": { "type": ["string", "null"] },
+          "event_date": { "type": "string" },
+          "event_time": { "type": "string" },
+          "event_type": { "type": "string" },
+          "id": { "type": "string", "format": "uuid" },
+          "location_address": { "type": "string" },
+          "location_name": { "type": "string" },
+          "name": { "type": "string" }
+        },
+        "x-readme-ref-name": "EventResponse"
+      }
+    }
+  },
+  "x-readme-ref-name": "EventsListResponse"
+}

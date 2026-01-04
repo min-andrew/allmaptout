@@ -133,3 +133,81 @@ pub struct SessionResponse {
     /// Admin username (if admin session).
     pub admin_username: Option<String>,
 }
+
+// ============================================================================
+// Events schemas
+// ============================================================================
+
+/// Response for a single event.
+#[derive(Debug, Clone, Serialize, Deserialize, ToSchema)]
+pub struct EventResponse {
+    pub id: Uuid,
+    pub name: String,
+    pub event_type: String,
+    pub event_date: String,
+    pub event_time: String,
+    pub location_name: String,
+    pub location_address: String,
+    pub description: Option<String>,
+}
+
+/// Response containing a list of events.
+#[derive(Debug, Clone, Serialize, Deserialize, ToSchema)]
+pub struct EventsListResponse {
+    pub events: Vec<EventResponse>,
+}
+
+// ============================================================================
+// RSVP schemas
+// ============================================================================
+
+/// Input for a single attendee in an RSVP submission.
+#[derive(Debug, Clone, Serialize, Deserialize, Validate, ToSchema)]
+pub struct AttendeeInput {
+    #[validate(length(min = 1, max = 100, message = "Name must be 1-100 characters"))]
+    pub name: String,
+    pub is_attending: bool,
+    pub meal_preference: Option<String>,
+    #[validate(length(
+        max = 500,
+        message = "Dietary restrictions must be under 500 characters"
+    ))]
+    pub dietary_restrictions: Option<String>,
+    pub is_primary: bool,
+}
+
+/// Request to submit or update an RSVP.
+#[derive(Debug, Clone, Serialize, Deserialize, Validate, ToSchema)]
+pub struct SubmitRsvpRequest {
+    #[validate(length(min = 1, message = "At least one attendee required"))]
+    pub attendees: Vec<AttendeeInput>,
+}
+
+/// Response for a single attendee.
+#[derive(Debug, Clone, Serialize, Deserialize, ToSchema)]
+pub struct AttendeeResponse {
+    pub id: Uuid,
+    pub name: String,
+    pub is_attending: bool,
+    pub meal_preference: Option<String>,
+    pub dietary_restrictions: Option<String>,
+    pub is_primary: bool,
+}
+
+/// Response for an RSVP with its attendees.
+#[derive(Debug, Clone, Serialize, Deserialize, ToSchema)]
+pub struct RsvpResponse {
+    pub id: Uuid,
+    pub guest_id: Uuid,
+    pub responded_at: String,
+    pub attendees: Vec<AttendeeResponse>,
+}
+
+/// Response for RSVP status check.
+#[derive(Debug, Clone, Serialize, Deserialize, ToSchema)]
+pub struct RsvpStatusResponse {
+    pub has_responded: bool,
+    pub party_size: i32,
+    pub guest_name: String,
+    pub rsvp: Option<RsvpResponse>,
+}
