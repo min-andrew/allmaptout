@@ -1,0 +1,31 @@
+---
+import Layout from "../layouts/Layout.astro";
+import RsvpForm from "../components/RsvpForm.svelte";
+import LogoutButton from "../components/LogoutButton.svelte";
+
+const session = Astro.locals.session;
+---
+
+<Layout title="RSVP">
+  <main class="mx-auto max-w-2xl px-4 py-8">
+    <div class="mb-8 flex items-center justify-between">
+      <div>
+        <h1 class="mb-2 text-3xl font-bold text-gray-900">RSVP</h1>
+        {
+          session?.guest_name && (
+            <p class="text-gray-600">Responding for: {session.guest_name}</p>
+          )
+        }
+      </div>
+      <LogoutButton client:load />
+    </div>
+
+    <RsvpForm client:load guestName={session?.guest_name || ""} />
+
+    <div class="mt-8">
+      <a href="/events" class="text-blue-600 hover:text-blue-700">
+        &larr; Back to Events
+      </a>
+    </div>
+  </main>
+</Layout>

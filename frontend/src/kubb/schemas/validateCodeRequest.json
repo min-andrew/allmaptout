@@ -1,0 +1,9 @@
+{
+  "type": "object",
+  "description": "Request to validate an invite code.",
+  "required": ["code"],
+  "properties": {
+    "code": { "type": "string", "description": "The invite code to validate." }
+  },
+  "x-readme-ref-name": "ValidateCodeRequest"
+}

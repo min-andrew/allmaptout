@@ -1,0 +1,24 @@
+{
+  "type": "object",
+  "description": "Request to submit or update an RSVP.",
+  "required": ["attendees"],
+  "properties": {
+    "attendees": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "description": "Input for a single attendee in an RSVP submission.",
+        "required": ["name", "is_attending", "is_primary"],
+        "properties": {
+          "dietary_restrictions": { "type": ["string", "null"] },
+          "is_attending": { "type": "boolean" },
+          "is_primary": { "type": "boolean" },
+          "meal_preference": { "type": ["string", "null"] },
+          "name": { "type": "string" }
+        },
+        "x-readme-ref-name": "AttendeeInput"
+      }
+    }
+  },
+  "x-readme-ref-name": "SubmitRsvpRequest"
+}

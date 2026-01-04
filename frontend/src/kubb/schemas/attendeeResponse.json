@@ -1,0 +1,14 @@
+{
+  "type": "object",
+  "description": "Response for a single attendee.",
+  "required": ["id", "name", "is_attending", "is_primary"],
+  "properties": {
+    "dietary_restrictions": { "type": ["string", "null"] },
+    "id": { "type": "string", "format": "uuid" },
+    "is_attending": { "type": "boolean" },
+    "is_primary": { "type": "boolean" },
+    "meal_preference": { "type": ["string", "null"] },
+    "name": { "type": "string" }
+  },
+  "x-readme-ref-name": "AttendeeResponse"
+}

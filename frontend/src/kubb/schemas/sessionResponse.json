@@ -1,0 +1,30 @@
+{
+  "type": "object",
+  "description": "Response for current session info.",
+  "required": ["session_type"],
+  "properties": {
+    "admin_id": {
+      "type": ["string", "null"],
+      "format": "uuid",
+      "description": "Admin ID (if admin session)."
+    },
+    "admin_username": {
+      "type": ["string", "null"],
+      "description": "Admin username (if admin session)."
+    },
+    "guest_id": {
+      "type": ["string", "null"],
+      "format": "uuid",
+      "description": "Guest ID (if guest session)."
+    },
+    "guest_name": {
+      "type": ["string", "null"],
+      "description": "Guest name (if guest session)."
+    },
+    "session_type": {
+      "type": "string",
+      "description": "Session type: \"guest\", \"admin_pending\", or \"admin\"."
+    }
+  },
+  "x-readme-ref-name": "SessionResponse"
+}

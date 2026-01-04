@@ -1,6 +1,6 @@
 <script lang="ts">
-  import { validateCode } from "../api/auth";
-  import { ApiError, NetworkError } from "../api/client";
+  import { useValidateCode } from "../kubb/hooks/useValidateCode";
+  import { getErrorMessage } from "../api/errors";
 
   let code = "";
   let error = "";
@@ -16,7 +16,10 @@
 
     loading = true;
     try {
-      const result = await validateCode(code.trim());
+      const result = await useValidateCode(
+        { code: code.trim() },
+        { withCredentials: true },
+      );
 
       if (result.session_type === "guest") {
         window.location.href = "/events";
@@ -24,13 +27,7 @@
         window.location.href = "/admin/login";
       }
     } catch (err) {
-      if (err instanceof ApiError) {
-        error = err.userMessage;
-      } else if (err instanceof NetworkError) {
-        error = err.message;
-      } else {
-        error = "Something went wrong";
-      }
+      error = getErrorMessage(err);
     } finally {
       loading = false;
     }

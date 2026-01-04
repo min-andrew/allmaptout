@@ -1,0 +1,29 @@
+{
+  "type": "object",
+  "description": "Response body for validation errors.",
+  "required": ["error", "fields"],
+  "properties": {
+    "error": { "type": "string", "description": "The error type." },
+    "fields": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "description": "A validation error for a specific field.",
+        "required": ["field", "message"],
+        "properties": {
+          "field": {
+            "type": "string",
+            "description": "The field that failed validation."
+          },
+          "message": {
+            "type": "string",
+            "description": "A human-readable error message."
+          }
+        },
+        "x-readme-ref-name": "FieldError"
+      },
+      "description": "List of field-level validation errors."
+    }
+  },
+  "x-readme-ref-name": "ValidationErrorResponse"
+}

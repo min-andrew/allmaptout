@@ -1,6 +1,6 @@
 <script lang="ts">
-  import { adminLogin } from "../api/auth";
-  import { ApiError, NetworkError } from "../api/client";
+  import { useAdminLogin } from "../kubb/hooks/useAdminLogin";
+  import { getErrorMessage, isUnauthorized } from "../api/errors";
 
   let username = "";
   let password = "";
@@ -17,19 +17,16 @@
 
     loading = true;
     try {
-      await adminLogin(username.trim(), password);
+      await useAdminLogin(
+        { username: username.trim(), password },
+        { withCredentials: true },
+      );
       window.location.href = "/admin";
     } catch (err) {
-      if (err instanceof ApiError) {
-        if (err.isUnauthorized) {
-          error = "Invalid username or password";
-        } else {
-          error = err.userMessage;
-        }
-      } else if (err instanceof NetworkError) {
-        error = err.message;
+      if (isUnauthorized(err)) {
+        error = "Invalid username or password";
       } else {
-        error = "Something went wrong";
+        error = getErrorMessage(err);
       }
     } finally {
       loading = false;

@@ -1,0 +1,16 @@
+{
+  "type": "object",
+  "description": "A validation error for a specific field.",
+  "required": ["field", "message"],
+  "properties": {
+    "field": {
+      "type": "string",
+      "description": "The field that failed validation."
+    },
+    "message": {
+      "type": "string",
+      "description": "A human-readable error message."
+    }
+  },
+  "x-readme-ref-name": "FieldError"
+}
