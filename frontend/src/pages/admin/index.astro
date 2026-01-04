@@ -1,0 +1,46 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import LogoutButton from "../../components/LogoutButton.svelte";
+
+const session = Astro.locals.session;
+---
+
+<Layout title="Admin Dashboard">
+  <main class="mx-auto max-w-6xl px-4 py-8">
+    <div class="mb-8 flex items-center justify-between">
+      <div>
+        <h1 class="text-3xl font-bold text-gray-900">Admin Dashboard</h1>
+        {
+          session?.admin_username && (
+            <p class="text-gray-600">Logged in as {session.admin_username}</p>
+          )
+        }
+      </div>
+      <LogoutButton client:load />
+    </div>
+
+    <div class="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+      <a
+        href="/admin/guests"
+        class="block rounded-lg bg-white p-6 shadow transition-shadow hover:shadow-md"
+      >
+        <h2 class="mb-2 text-lg font-semibold text-gray-900">
+          Guest Management
+        </h2>
+        <p class="text-sm text-gray-600">
+          Add, edit, and manage wedding guests
+        </p>
+      </a>
+
+      <div class="rounded-lg bg-white p-6 shadow">
+        <h2 class="mb-2 text-lg font-semibold text-gray-900">RSVP Summary</h2>
+        <p class="text-sm text-gray-600">Coming soon...</p>
+      </div>
+
+      <div class="rounded-lg bg-white p-6 shadow">
+        <h2 class="mb-2 text-lg font-semibold text-gray-900">Event Details</h2>
+        <p class="text-sm text-gray-600">Coming soon...</p>
+      </div>
+    </div>
+  </main>
+</Layout>

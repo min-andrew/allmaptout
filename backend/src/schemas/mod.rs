@@ -79,56 +79,57 @@ impl ValidationErrorResponse {
 }
 
 // ============================================================================
-// Example schemas - delete or modify these when building your features
+// Auth schemas
 // ============================================================================
 
-/// Example: User creation request with validation.
-///
-/// ```rust
-/// use allmaptout_backend::schemas::CreateUser;
-/// use validator::Validate;
-///
-/// let valid = CreateUser {
-///     email: "user@example.com".into(),
-///     name: "John Doe".into(),
-/// };
-/// assert!(valid.validate().is_ok());
-///
-/// let invalid = CreateUser {
-///     email: "not-an-email".into(),
-///     name: "".into(),
-/// };
-/// assert!(invalid.validate().is_err());
-/// ```
+use uuid::Uuid;
+
+/// Request to validate an invite code.
 #[derive(Debug, Clone, Serialize, Deserialize, Validate, ToSchema)]
-pub struct CreateUser {
-    /// User's email address.
-    #[validate(email(message = "Invalid email format"))]
-    pub email: String,
-
-    /// User's display name.
-    #[validate(length(min = 1, max = 100, message = "Name must be 1-100 characters"))]
-    pub name: String,
+pub struct ValidateCodeRequest {
+    /// The invite code to validate.
+    #[validate(length(min = 1, max = 50, message = "Code is required"))]
+    pub code: String,
 }
 
-/// Example: Pagination parameters with validation.
+/// Response after validating an invite code.
+#[derive(Debug, Clone, Serialize, Deserialize, ToSchema)]
+pub struct ValidateCodeResponse {
+    /// The type of session created: "guest" or "admin_pending".
+    pub session_type: String,
+    /// Guest name (only for guest sessions).
+    pub guest_name: Option<String>,
+}
+
+/// Request for admin login (username/password).
 #[derive(Debug, Clone, Serialize, Deserialize, Validate, ToSchema)]
-pub struct PaginationParams {
-    /// Page number (1-indexed).
-    #[validate(range(min = 1, message = "Page must be at least 1"))]
-    #[serde(default = "default_page")]
-    pub page: u32,
-
-    /// Number of items per page.
-    #[validate(range(min = 1, max = 100, message = "Limit must be 1-100"))]
-    #[serde(default = "default_limit")]
-    pub limit: u32,
+pub struct AdminLoginRequest {
+    /// Admin username.
+    #[validate(length(min = 1, max = 100, message = "Username is required"))]
+    pub username: String,
+    /// Admin password.
+    #[validate(length(min = 1, message = "Password is required"))]
+    pub password: String,
 }
 
-fn default_page() -> u32 {
-    1
+/// Response after successful admin login.
+#[derive(Debug, Clone, Serialize, Deserialize, ToSchema)]
+pub struct AdminLoginResponse {
+    /// The admin's username.
+    pub username: String,
 }
 
-fn default_limit() -> u32 {
-    20
+/// Response for current session info.
+#[derive(Debug, Clone, Serialize, Deserialize, ToSchema)]
+pub struct SessionResponse {
+    /// Session type: "guest", "admin_pending", or "admin".
+    pub session_type: String,
+    /// Guest ID (if guest session).
+    pub guest_id: Option<Uuid>,
+    /// Guest name (if guest session).
+    pub guest_name: Option<String>,
+    /// Admin ID (if admin session).
+    pub admin_id: Option<Uuid>,
+    /// Admin username (if admin session).
+    pub admin_username: Option<String>,
 }

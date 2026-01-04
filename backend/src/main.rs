@@ -43,7 +43,7 @@ async fn main() -> anyhow::Result<()> {
     info!("Starting server on {}", addr);
 
     let listener = tokio::net::TcpListener::bind(addr).await?;
-    axum::serve(listener, create_router())
+    axum::serve(listener, create_router(pool))
         .with_graceful_shutdown(shutdown_signal())
         .await?;
 

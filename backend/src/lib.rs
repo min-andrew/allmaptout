@@ -5,7 +5,7 @@ use axum::{
     extract::Request,
     middleware::{self, Next},
     response::Response,
-    routing::get,
+    routing::{get, post},
     Json, Router,
 };
 use http::{
@@ -13,6 +13,8 @@ use http::{
     Method,
 };
 use serde::Serialize;
+use sqlx::PgPool;
+use tower_cookies::CookieManagerLayer;
 use tower_governor::{
     governor::GovernorConfigBuilder,
     key_extractor::{KeyExtractor, SmartIpKeyExtractor},
@@ -25,8 +27,10 @@ use tower_http::{
 };
 use tracing::{Level, Span};
 
+pub mod auth;
 pub mod config;
 pub mod error;
+pub mod models;
 pub mod schemas;
 
 pub use error::{AppError, Result};
@@ -53,25 +57,24 @@ pub async fn health() -> Json<Health> {
 fn cors_layer() -> CorsLayer {
     let is_dev = std::env::var("RUST_ENV").unwrap_or_default() == "development";
 
-    if is_dev {
-        CorsLayer::permissive()
+    let origin = if is_dev {
+        "http://localhost:3000".to_string()
     } else {
-        // In production, restrict CORS to the frontend origin
-        // Set CORS_ORIGIN to your production URL (e.g., https://example.com)
-        let origin = std::env::var("CORS_ORIGIN").expect("CORS_ORIGIN must be set in production");
+        std::env::var("CORS_ORIGIN").expect("CORS_ORIGIN must be set in production")
+    };
 
-        CorsLayer::new()
-            .allow_origin(origin.parse::<HeaderValue>().unwrap())
-            .allow_methods([Method::GET, Method::POST, Method::PUT, Method::DELETE])
-            .allow_headers([http::header::CONTENT_TYPE, http::header::AUTHORIZATION])
-    }
+    CorsLayer::new()
+        .allow_origin(origin.parse::<HeaderValue>().unwrap())
+        .allow_methods([Method::GET, Method::POST, Method::PUT, Method::DELETE])
+        .allow_headers([http::header::CONTENT_TYPE, http::header::AUTHORIZATION])
+        .allow_credentials(true)
 }
 
-pub fn create_router() -> Router {
-    create_router_with_rate_limit(true)
+pub fn create_router(pool: PgPool) -> Router {
+    create_router_with_rate_limit(pool, true)
 }
 
-pub fn create_router_with_rate_limit(enable_rate_limit: bool) -> Router {
+pub fn create_router_with_rate_limit(pool: PgPool, enable_rate_limit: bool) -> Router {
     let governor_config = Arc::new(
         GovernorConfigBuilder::default()
             .per_second(10)
@@ -154,6 +157,12 @@ pub fn create_router_with_rate_limit(enable_rate_limit: bool) -> Router {
 
     Router::new()
         .route("/health", get(health))
+        .route("/auth/code", post(auth::validate_code))
+        .route("/auth/admin/login", post(auth::admin_login))
+        .route("/auth/logout", post(auth::logout))
+        .route("/auth/session", get(auth::get_session))
+        .with_state(pool)
+        .layer(CookieManagerLayer::new())
         .layer(rate_limit_middleware)
         .layer(trace_layer)
         .layer(cors_layer())
@@ -171,12 +180,24 @@ pub fn create_router_with_rate_limit(enable_rate_limit: bool) -> Router {
 mod tests {
     use super::*;
     use axum_test::TestServer;
+    use sqlx::postgres::PgPoolOptions;
+
+    async fn test_pool() -> PgPool {
+        dotenvy::dotenv().ok();
+        let database_url =
+            std::env::var("DATABASE_URL").expect("DATABASE_URL must be set for tests");
+        PgPoolOptions::new()
+            .max_connections(1)
+            .connect(&database_url)
+            .await
+            .expect("Failed to connect to test database")
+    }
 
     #[tokio::test]
     async fn health_returns_ok() {
-        // Set development mode for tests to avoid CORS_ORIGIN requirement
         std::env::set_var("RUST_ENV", "development");
-        let server = TestServer::new(create_router_with_rate_limit(false)).unwrap();
+        let pool = test_pool().await;
+        let server = TestServer::new(create_router_with_rate_limit(pool, false)).unwrap();
         let response = server.get("/health").await;
         response.assert_status_ok();
     }
