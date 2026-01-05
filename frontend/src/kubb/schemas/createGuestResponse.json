@@ -1,0 +1,12 @@
+{
+  "type": "object",
+  "description": "Response after creating a guest (includes generated invite code).",
+  "required": ["id", "name", "party_size", "invite_code"],
+  "properties": {
+    "id": { "type": "string", "format": "uuid" },
+    "invite_code": { "type": "string" },
+    "name": { "type": "string" },
+    "party_size": { "type": "integer", "format": "int32" }
+  },
+  "x-readme-ref-name": "CreateGuestResponse"
+}

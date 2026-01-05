@@ -25,5 +25,8 @@ export default defineConfig({
         },
       },
     },
+    optimizeDeps: {
+      include: ["axios", "@kubb/plugin-client/clients/axios"],
+    },
   },
 });

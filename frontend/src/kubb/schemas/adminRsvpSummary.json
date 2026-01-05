@@ -1,0 +1,12 @@
+{
+  "type": "object",
+  "description": "RSVP summary for a guest in admin view.",
+  "required": ["has_responded", "attending_count", "not_attending_count"],
+  "properties": {
+    "attending_count": { "type": "integer", "format": "int32" },
+    "has_responded": { "type": "boolean" },
+    "not_attending_count": { "type": "integer", "format": "int32" },
+    "responded_at": { "type": ["string", "null"] }
+  },
+  "x-readme-ref-name": "AdminRsvpSummary"
+}

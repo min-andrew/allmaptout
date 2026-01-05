@@ -1,0 +1,25 @@
+{
+  "type": "object",
+  "description": "Guest with invite code and RSVP status for admin view.",
+  "required": ["id", "name", "party_size", "rsvp", "created_at"],
+  "properties": {
+    "created_at": { "type": "string" },
+    "id": { "type": "string", "format": "uuid" },
+    "invite_code": { "type": ["string", "null"] },
+    "name": { "type": "string" },
+    "party_size": { "type": "integer", "format": "int32" },
+    "rsvp": {
+      "type": "object",
+      "description": "RSVP summary for a guest in admin view.",
+      "required": ["has_responded", "attending_count", "not_attending_count"],
+      "properties": {
+        "attending_count": { "type": "integer", "format": "int32" },
+        "has_responded": { "type": "boolean" },
+        "not_attending_count": { "type": "integer", "format": "int32" },
+        "responded_at": { "type": ["string", "null"] }
+      },
+      "x-readme-ref-name": "AdminRsvpSummary"
+    }
+  },
+  "x-readme-ref-name": "AdminGuestResponse"
+}

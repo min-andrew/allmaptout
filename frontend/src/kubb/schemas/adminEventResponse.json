@@ -1,0 +1,26 @@
+{
+  "type": "object",
+  "description": "Response for admin event (includes display_order).",
+  "required": [
+    "id",
+    "name",
+    "event_type",
+    "event_date",
+    "event_time",
+    "location_name",
+    "location_address",
+    "display_order"
+  ],
+  "properties": {
+    "description": { "type": ["string", "null"] },
+    "display_order": { "type": "integer", "format": "int32" },
+    "event_date": { "type": "string" },
+    "event_time": { "type": "string" },
+    "event_type": { "type": "string" },
+    "id": { "type": "string", "format": "uuid" },
+    "location_address": { "type": "string" },
+    "location_name": { "type": "string" },
+    "name": { "type": "string" }
+  },
+  "x-readme-ref-name": "AdminEventResponse"
+}

@@ -1,0 +1,17 @@
+{
+  "type": "object",
+  "description": "A recent RSVP entry for the dashboard.",
+  "required": [
+    "guest_name",
+    "responded_at",
+    "attending_count",
+    "not_attending_count"
+  ],
+  "properties": {
+    "attending_count": { "type": "integer", "format": "int32" },
+    "guest_name": { "type": "string" },
+    "not_attending_count": { "type": "integer", "format": "int32" },
+    "responded_at": { "type": "string" }
+  },
+  "x-readme-ref-name": "RecentRsvp"
+}

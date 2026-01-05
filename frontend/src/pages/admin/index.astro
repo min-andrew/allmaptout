@@ -1,6 +1,7 @@
 ---
 import Layout from "../../layouts/Layout.astro";
 import LogoutButton from "../../components/LogoutButton.svelte";
+import DashboardStats from "../../components/DashboardStats.svelte";
 
 const session = Astro.locals.session;
 ---
@@ -19,28 +20,34 @@ const session = Astro.locals.session;
       <LogoutButton client:load />
     </div>
 
-    <div class="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+    <!-- Quick Links -->
+    <div class="mb-8 grid grid-cols-1 gap-4 sm:grid-cols-3">
       <a
         href="/admin/guests"
-        class="block rounded-lg bg-white p-6 shadow transition-shadow hover:shadow-md"
+        class="block rounded-lg bg-blue-600 p-4 text-white shadow transition-colors hover:bg-blue-700"
       >
-        <h2 class="mb-2 text-lg font-semibold text-gray-900">
-          Guest Management
-        </h2>
-        <p class="text-sm text-gray-600">
-          Add, edit, and manage wedding guests
-        </p>
+        <h2 class="font-semibold">Guest Management</h2>
+        <p class="text-sm text-blue-100">Add, edit, and manage guests</p>
       </a>
 
-      <div class="rounded-lg bg-white p-6 shadow">
-        <h2 class="mb-2 text-lg font-semibold text-gray-900">RSVP Summary</h2>
-        <p class="text-sm text-gray-600">Coming soon...</p>
-      </div>
+      <a
+        href="/admin/events"
+        class="block rounded-lg bg-white p-4 shadow transition-shadow hover:shadow-md"
+      >
+        <h2 class="font-semibold text-gray-900">Event Details</h2>
+        <p class="text-sm text-gray-600">Edit ceremony and reception info</p>
+      </a>
 
-      <div class="rounded-lg bg-white p-6 shadow">
-        <h2 class="mb-2 text-lg font-semibold text-gray-900">Event Details</h2>
-        <p class="text-sm text-gray-600">Coming soon...</p>
-      </div>
+      <a
+        href="/admin/settings"
+        class="block rounded-lg bg-white p-4 shadow transition-shadow hover:shadow-md"
+      >
+        <h2 class="font-semibold text-gray-900">Settings</h2>
+        <p class="text-sm text-gray-600">Password and site settings</p>
+      </a>
     </div>
+
+    <!-- Dashboard Stats -->
+    <DashboardStats client:load />
   </main>
 </Layout>

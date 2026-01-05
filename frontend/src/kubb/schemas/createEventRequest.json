@@ -1,0 +1,27 @@
+{
+  "type": "object",
+  "description": "Request to create a new event.",
+  "required": [
+    "name",
+    "event_type",
+    "event_date",
+    "event_time",
+    "location_name",
+    "location_address",
+    "display_order"
+  ],
+  "properties": {
+    "description": { "type": ["string", "null"] },
+    "display_order": { "type": "integer", "format": "int32" },
+    "event_date": {
+      "type": "string",
+      "description": "Date in YYYY-MM-DD format."
+    },
+    "event_time": { "type": "string", "description": "Time in HH:MM format." },
+    "event_type": { "type": "string" },
+    "location_address": { "type": "string" },
+    "location_name": { "type": "string" },
+    "name": { "type": "string" }
+  },
+  "x-readme-ref-name": "CreateEventRequest"
+}

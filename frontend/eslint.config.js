@@ -1,6 +1,7 @@
 import eslint from "@eslint/js";
 import astro from "eslint-plugin-astro";
 import svelte from "eslint-plugin-svelte";
+import tsParser from "@typescript-eslint/parser";
 
 export default [
   eslint.configs.recommended,
@@ -12,6 +13,9 @@ export default [
   {
     files: ["**/*.svelte"],
     languageOptions: {
+      parserOptions: {
+        parser: tsParser,
+      },
       globals: {
         window: "readonly",
         document: "readonly",

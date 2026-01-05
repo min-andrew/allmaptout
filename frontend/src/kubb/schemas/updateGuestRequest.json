@@ -1,0 +1,10 @@
+{
+  "type": "object",
+  "description": "Request to update an existing guest.",
+  "required": ["name", "party_size"],
+  "properties": {
+    "name": { "type": "string" },
+    "party_size": { "type": "integer", "format": "int32" }
+  },
+  "x-readme-ref-name": "UpdateGuestRequest"
+}

@@ -211,3 +211,183 @@ pub struct RsvpStatusResponse {
     pub guest_name: String,
     pub rsvp: Option<RsvpResponse>,
 }
+
+// ============================================================================
+// Admin Guest Management schemas
+// ============================================================================
+
+/// Request to create a new guest.
+#[derive(Debug, Clone, Serialize, Deserialize, Validate, ToSchema)]
+pub struct CreateGuestRequest {
+    #[validate(length(min = 1, max = 100, message = "Name must be 1-100 characters"))]
+    pub name: String,
+    #[validate(range(min = 1, max = 20, message = "Party size must be between 1 and 20"))]
+    pub party_size: i32,
+}
+
+/// Request to update an existing guest.
+#[derive(Debug, Clone, Serialize, Deserialize, Validate, ToSchema)]
+pub struct UpdateGuestRequest {
+    #[validate(length(min = 1, max = 100, message = "Name must be 1-100 characters"))]
+    pub name: String,
+    #[validate(range(min = 1, max = 20, message = "Party size must be between 1 and 20"))]
+    pub party_size: i32,
+}
+
+/// RSVP summary for a guest in admin view.
+#[derive(Debug, Clone, Serialize, Deserialize, ToSchema)]
+pub struct AdminRsvpSummary {
+    pub has_responded: bool,
+    pub responded_at: Option<String>,
+    pub attending_count: i32,
+    pub not_attending_count: i32,
+}
+
+/// Guest with invite code and RSVP status for admin view.
+#[derive(Debug, Clone, Serialize, Deserialize, ToSchema)]
+pub struct AdminGuestResponse {
+    pub id: Uuid,
+    pub name: String,
+    pub party_size: i32,
+    pub invite_code: Option<String>,
+    pub rsvp: AdminRsvpSummary,
+    pub created_at: String,
+}
+
+/// Response containing list of guests for admin.
+#[derive(Debug, Clone, Serialize, Deserialize, ToSchema)]
+pub struct AdminGuestsListResponse {
+    pub guests: Vec<AdminGuestResponse>,
+    pub total: i64,
+}
+
+/// Response after creating a guest (includes generated invite code).
+#[derive(Debug, Clone, Serialize, Deserialize, ToSchema)]
+pub struct CreateGuestResponse {
+    pub id: Uuid,
+    pub name: String,
+    pub party_size: i32,
+    pub invite_code: String,
+}
+
+/// Response after generating a new invite code.
+#[derive(Debug, Clone, Serialize, Deserialize, ToSchema)]
+pub struct GenerateCodeResponse {
+    pub invite_code: String,
+}
+
+// ============================================================================
+// Admin Dashboard schemas
+// ============================================================================
+
+/// A recent RSVP entry for the dashboard.
+#[derive(Debug, Clone, Serialize, Deserialize, ToSchema)]
+pub struct RecentRsvp {
+    pub guest_name: String,
+    pub responded_at: String,
+    pub attending_count: i32,
+    pub not_attending_count: i32,
+}
+
+/// Dashboard statistics response.
+#[derive(Debug, Clone, Serialize, Deserialize, ToSchema)]
+pub struct DashboardStatsResponse {
+    pub total_guests: i64,
+    pub total_expected_attendees: i64,
+    pub rsvp_count: i64,
+    pub pending_rsvps: i64,
+    pub attending_count: i64,
+    pub not_attending_count: i64,
+    pub recent_rsvps: Vec<RecentRsvp>,
+}
+
+// ============================================================================
+// Admin Event Management schemas
+// ============================================================================
+
+/// Request to create a new event.
+#[derive(Debug, Clone, Serialize, Deserialize, Validate, ToSchema)]
+pub struct CreateEventRequest {
+    #[validate(length(min = 1, max = 100, message = "Name must be 1-100 characters"))]
+    pub name: String,
+    #[validate(length(min = 1, max = 50, message = "Event type must be 1-50 characters"))]
+    pub event_type: String,
+    /// Date in YYYY-MM-DD format.
+    pub event_date: String,
+    /// Time in HH:MM format.
+    pub event_time: String,
+    #[validate(length(min = 1, max = 200, message = "Location name must be 1-200 characters"))]
+    pub location_name: String,
+    #[validate(length(
+        min = 1,
+        max = 500,
+        message = "Location address must be 1-500 characters"
+    ))]
+    pub location_address: String,
+    #[validate(length(max = 2000, message = "Description must be under 2000 characters"))]
+    pub description: Option<String>,
+    pub display_order: i32,
+}
+
+/// Request to update an existing event.
+#[derive(Debug, Clone, Serialize, Deserialize, Validate, ToSchema)]
+pub struct UpdateEventRequest {
+    #[validate(length(min = 1, max = 100, message = "Name must be 1-100 characters"))]
+    pub name: String,
+    #[validate(length(min = 1, max = 50, message = "Event type must be 1-50 characters"))]
+    pub event_type: String,
+    /// Date in YYYY-MM-DD format.
+    pub event_date: String,
+    /// Time in HH:MM format.
+    pub event_time: String,
+    #[validate(length(min = 1, max = 200, message = "Location name must be 1-200 characters"))]
+    pub location_name: String,
+    #[validate(length(
+        min = 1,
+        max = 500,
+        message = "Location address must be 1-500 characters"
+    ))]
+    pub location_address: String,
+    #[validate(length(max = 2000, message = "Description must be under 2000 characters"))]
+    pub description: Option<String>,
+    pub display_order: i32,
+}
+
+/// Response for admin event (includes display_order).
+#[derive(Debug, Clone, Serialize, Deserialize, ToSchema)]
+pub struct AdminEventResponse {
+    pub id: Uuid,
+    pub name: String,
+    pub event_type: String,
+    pub event_date: String,
+    pub event_time: String,
+    pub location_name: String,
+    pub location_address: String,
+    pub description: Option<String>,
+    pub display_order: i32,
+}
+
+/// Response containing list of events for admin.
+#[derive(Debug, Clone, Serialize, Deserialize, ToSchema)]
+pub struct AdminEventsListResponse {
+    pub events: Vec<AdminEventResponse>,
+}
+
+// ============================================================================
+// Admin Settings schemas
+// ============================================================================
+
+/// Request to change admin password.
+#[derive(Debug, Clone, Serialize, Deserialize, Validate, ToSchema)]
+pub struct ChangePasswordRequest {
+    #[validate(length(min = 1, message = "Current password is required"))]
+    pub current_password: String,
+    #[validate(length(min = 8, message = "New password must be at least 8 characters"))]
+    pub new_password: String,
+}
+
+/// Response after successful password change.
+#[derive(Debug, Clone, Serialize, Deserialize, ToSchema)]
+pub struct ChangePasswordResponse {
+    pub message: String,
+}

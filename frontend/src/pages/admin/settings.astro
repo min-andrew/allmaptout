@@ -1,0 +1,30 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import SettingsForm from "../../components/SettingsForm.svelte";
+import LogoutButton from "../../components/LogoutButton.svelte";
+
+const session = Astro.locals.session;
+---
+
+<Layout title="Settings - Admin">
+  <main class="mx-auto max-w-6xl px-4 py-8">
+    <div class="mb-8 flex items-center justify-between">
+      <div>
+        <div class="mb-2 flex items-center gap-2">
+          <a href="/admin" class="text-blue-600 hover:text-blue-700">
+            &larr; Dashboard
+          </a>
+        </div>
+        <h1 class="text-3xl font-bold text-gray-900">Settings</h1>
+        {
+          session?.admin_username && (
+            <p class="text-gray-600">Logged in as {session.admin_username}</p>
+          )
+        }
+      </div>
+      <LogoutButton client:load />
+    </div>
+
+    <SettingsForm client:load />
+  </main>
+</Layout>

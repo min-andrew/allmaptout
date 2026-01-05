@@ -1,0 +1,42 @@
+{
+  "type": "object",
+  "description": "Dashboard statistics response.",
+  "required": [
+    "total_guests",
+    "total_expected_attendees",
+    "rsvp_count",
+    "pending_rsvps",
+    "attending_count",
+    "not_attending_count",
+    "recent_rsvps"
+  ],
+  "properties": {
+    "attending_count": { "type": "integer", "format": "int64" },
+    "not_attending_count": { "type": "integer", "format": "int64" },
+    "pending_rsvps": { "type": "integer", "format": "int64" },
+    "recent_rsvps": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "description": "A recent RSVP entry for the dashboard.",
+        "required": [
+          "guest_name",
+          "responded_at",
+          "attending_count",
+          "not_attending_count"
+        ],
+        "properties": {
+          "attending_count": { "type": "integer", "format": "int32" },
+          "guest_name": { "type": "string" },
+          "not_attending_count": { "type": "integer", "format": "int32" },
+          "responded_at": { "type": "string" }
+        },
+        "x-readme-ref-name": "RecentRsvp"
+      }
+    },
+    "rsvp_count": { "type": "integer", "format": "int64" },
+    "total_expected_attendees": { "type": "integer", "format": "int64" },
+    "total_guests": { "type": "integer", "format": "int64" }
+  },
+  "x-readme-ref-name": "DashboardStatsResponse"
+}
